@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="EventMonitorServiceService" targetNamespace="http://ws.model.eventmonitor.jboss.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ws.model.eventmonitor.jboss.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.model.eventmonitor.jboss.org/" elementFormDefault="unqualified" targetNamespace="http://ws.model.eventmonitor.jboss.org/" version="1.0">
+            <xs:element name="newEvent" type="tns:newEvent" />
+            <xs:element name="newEventResponse" type="tns:newEventResponse" />
+            <xs:complexType name="newEvent">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="event" type="tns:event" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="event">
+                <xs:sequence>
+                    <xs:element name="requestId" type="xs:string" />
+                    <xs:element name="componentName" type="xs:string" />
+                    <xs:element name="eventName" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="newEventResponse">
+            <!-- 
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="event" type="tns:event" />
+                </xs:sequence>
+             -->
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="newEventResponse">
+        <wsdl:part name="parameters" element="tns:newEventResponse">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="newEvent">
+        <wsdl:part name="parameters" element="tns:newEvent">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="EventMonitor">
+        <wsdl:operation name="newEvent">
+            <wsdl:input name="newEvent" message="tns:newEvent">
+            </wsdl:input>
+            <wsdl:output name="newEventResponse" message="tns:newEventResponse">
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="EventMonitorServiceServiceSoapBinding" type="tns:EventMonitor">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="newEvent">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input name="newEvent">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="newEventResponse">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="EventMonitorServiceService">
+        <wsdl:port name="EventMonitorPort" binding="tns:EventMonitorServiceServiceSoapBinding">
+            <soap:address location="http://localhost:9090/EventMonitorPort" />
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
