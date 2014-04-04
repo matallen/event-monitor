@@ -10,6 +10,7 @@ public class Event{
   public String getComponent()     { return component;     }
 	public String getEventName()     { return eventName;     }
 	public long getTimestamp()       { return timestamp;     }
+	public Event(){/*for json/jackson only*/}
 	public Event(String component, String correlationId, String eventName, long timestamp) {
 		super();
 		this.component = component;

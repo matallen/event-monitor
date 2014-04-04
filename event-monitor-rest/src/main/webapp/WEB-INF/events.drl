@@ -46,7 +46,7 @@ when
 #    $e2 : Event(component==$component, correlationId==$correlationId, eventName=='end',
 #        this after[0m3s] $e1) from entry-point "EventStream"
 then
-    System.out.println("EVENT ALERT: route ["+$component+"] exceeded threshold of 3s. took "+($p.getDuration())+"ms.. notify everyone!");
+    System.out.println("EVENT ALERT: service/route ["+$component+"] exceeded threshold of 3s. took "+($p.getDuration())+"ms.. notify everyone!");
 end
 
 
