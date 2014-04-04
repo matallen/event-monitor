@@ -6,9 +6,11 @@
         <artifactId>event-monitor-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
+    <!--
+    mvn package -DskipTests jetty:run -Dinstance=1 -Djetty.port=8081
+    -->
     <artifactId>event-monitor-rest</artifactId>
     <packaging>war</packaging>
-    <!-- mvn package -DskipTests jetty:run -Dinstance=1 -Djetty.port=8081 -->
 
     <build>
         <finalName>${project.artifactId}</finalName>
@@ -33,6 +35,30 @@
     </build>
 
     <dependencies>
+        <dependency>
+          <groupId>net.java.quickcheck</groupId>
+          <artifactId>quickcheck</artifactId>
+          <version>0.6</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.codehaus.jackson</groupId>
+          <artifactId>jackson-mapper-asl</artifactId>
+          <version>1.9.4</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpclient</artifactId>
+          <version>4.2.5</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>com.jayway.restassured</groupId>
+          <artifactId>rest-assured</artifactId>
+          <version>1.8.1</version>
+          <scope>test</scope>
+        </dependency>
+        
         <dependency>
             <groupId>org.jboss.monitoring</groupId>
             <artifactId>event-monitor-core</artifactId>

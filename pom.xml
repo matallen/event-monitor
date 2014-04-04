@@ -15,8 +15,8 @@
     
     <modules>
         <!-- 
-         -->
         <module>event-monitor-bundle</module>
+         -->
         <module>event-monitor-rest</module>
         <module>event-monitor-core</module>
     </modules>

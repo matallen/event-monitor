@@ -1,33 +1,59 @@
 package org.jboss.camel.events;
 
-import org.jboss.eventmonitor.*;
+import org.jboss.eventmonitor.domain.*;
+import org.jboss.eventmonitor.handlers.*;
 
-declare org.jboss.eventmonitor.Event
+declare org.jboss.eventmonitor.domain.Event
    @role(event)
    @timestamp(timestamp)
 end;
 
-rule "log"
+
+rule "correlation"
+salience 1000000
 when
 #TODO: need to add a correlation ID in case two routes throw events in at the same time
-    $e1 : Event($component:component, eventName=='start') from entry-point "EventStream"
-    $e2 : Event(component==$component, eventName=='end') from entry-point "EventStream"
+    $e1 : Event($component:component, $correlationId:correlationId, eventName=='start') from entry-point "EventStream"
+    $e2 : Event(component==$component, correlationId==$correlationId, eventName=='end'
+    ,this after $e1
+    ) from entry-point "EventStream"
 then
-System.out.println("log fired! for component '"+$component+"'");
-    String component=$e1.getComponent();
-    long duration=$e2.getTimestamp()-$e1.getTimestamp();
-    new CsvLogHandler().with("component",component).with("duration",duration).debug();
+  EventProcess p=new EventProcess($e1,$e2);
+  insert(p);
+  System.out.println("Process created - "+p);
+  retract($e1);
+  retract($e2);
+end
+
+
+rule "log"
+salience 100
+when
+    $p:EventProcess()
+#    $e1 : Event($component:component, $correlationId:correlationId, eventName=='start') from entry-point "EventStream"
+#    $e2 : Event(component==$component, correlationId==$correlationId, eventName=='end'
+#    ,this after $e1
+#    ) from entry-point "EventStream"
+then
+    new CsvLogHandler().with("component",$p.getComponent()).with("correlationId",$p.getCorrelationId()).with("duration",$p.getDuration()).debug();
 end
 
 rule "max performance threshold of all routes"
 when
-    $e1 : Event($component:component, $eventName:eventName=='routeStart') from entry-point "EventStream"
-    $e2 : Event(component==$component, eventName=='routeEnd',
-        this after[0m1s] $e1) from entry-point "EventStream"
+    $p:EventProcess(duration>3000, $component:component)
+    
+#    $e1 : Event($component:component, $correlationId:correlationId, $eventName:eventName=='start') from entry-point "EventStream"
+#    $e2 : Event(component==$component, correlationId==$correlationId, eventName=='end',
+#        this after[0m3s] $e1) from entry-point "EventStream"
 then
-    System.out.println("EVENT ALERT: route ["+$component+"] exceeded threshold of 1s for event ["+$eventName+"]. took "+($e2.getTimestamp()-$e1.getTimestamp())+"ms.. notify everyone!");
-    retract($e1);
-    retract($e2);
+    System.out.println("EVENT ALERT: route ["+$component+"] exceeded threshold of 3s. took "+($p.getDuration())+"ms.. notify everyone!");
 end
 
 
+rule "cleanup"
+salience -1000000
+when
+    $p:EventProcess()
+then
+    retract($p);
+end
