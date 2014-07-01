@@ -1,12 +1,13 @@
 package org.jboss.eventmonitor.domain;
 
 public class EventProcess {
-  Event start;
-  Event end;
+  private Event start;
+//  private Event end;
   long duration;
+  
   public EventProcess(Event start, Event end){
     this.start=start;
-    this.end=end;
+//    this.end=end;
     if (!start.getComponent().equals(end.getComponent())) throw new RuntimeException("invalid event correlation on component name");
     duration=end.getTimestamp()-start.getTimestamp();
   }

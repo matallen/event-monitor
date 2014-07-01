@@ -1,4 +1,4 @@
-package org.jboss.eventmonitor.test;
+package org.jboss.eventmonitor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,15 +45,22 @@ public class RulePackageDownloader {
   
   private Collection<KnowledgePackage> compileFromDisk(String packageId, String version) throws FileNotFoundException, IOException{
     KnowledgeBuilder builder=KnowledgeBuilderFactory.newKnowledgeBuilder();
+    System.out.println("basePath="+basePath);
+    System.out.println("packageId="+packageId);
+//    System.out.println("X = "+packageId.replaceAll("\\.", File.separator)+File.separator+version);
     File packageFile=new File(basePath, packageId.replaceAll("\\.", File.separator)+File.separator+version);
-    for(File file:packageFile.listFiles()){
-      String drl=null;
-      if (file.getName().toLowerCase().matches(".+drl$")){
-        drl=IOUtils.toString(new FileInputStream(file));
-      }else if (file.getName().toLowerCase().matches(".+xls$")){
-        drl=new SpreadsheetCompiler().compile(new FileInputStream(file), InputType.XLS);
+    if (packageFile.exists()){
+      for(File file:packageFile.listFiles()){
+        String drl=null;
+        if (file.getName().toLowerCase().matches(".+drl$")){
+          drl=IOUtils.toString(new FileInputStream(file));
+        }else if (file.getName().toLowerCase().matches(".+xls$")){
+          drl=new SpreadsheetCompiler().compile(new FileInputStream(file), InputType.XLS);
+        }
+        if (null!=drl) builder.add(ResourceFactory.newByteArrayResource(drl.getBytes()), ResourceType.DRL);
       }
-      if (null!=drl) builder.add(ResourceFactory.newByteArrayResource(drl.getBytes()), ResourceType.DRL);
+    }else{
+      throw new FileNotFoundException("Path does not exist: "+packageFile.getAbsolutePath());
     }
     if (builder.hasErrors())
       throw new RuntimeException(builder.getErrors().toString());
@@ -61,6 +68,7 @@ public class RulePackageDownloader {
   }
   
   private Collection<KnowledgePackage> downloadFromGuvnor(String packageId, String version) throws IOException, ClassNotFoundException{
+//    System.out.println("Connecting to: "+basePath+packageId+"/"+version);
     UrlResource res=(UrlResource)ResourceFactory.newUrlResource(new URL(basePath+packageId+"/"+version));
     if (enableBasicAuthentication){
       res.setBasicAuthentication("enabled");

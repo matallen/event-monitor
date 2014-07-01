@@ -8,13 +8,26 @@
     </parent>
     <artifactId>event-monitor-core</artifactId>
     <packaging>jar</packaging>
-
+	
+	<properties>
+		<camel.version>2.13.1</camel.version>
+		<brms.version>5.3.1.GA</brms.version>
+	</properties>
+	
     <dependencies>
+        <!--
         <dependency>
-          <groupId>net.java.quickcheck</groupId>
-          <artifactId>quickcheck</artifactId>
-          <version>0.6</version>
-          <scope>test</scope>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        -->
+
+        <dependency>
+            <groupId>net.java.quickcheck</groupId>
+            <artifactId>quickcheck</artifactId>
+            <version>0.6</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -22,7 +35,7 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>jboss-enterprise.brms-engine</groupId>
             <artifactId>jbpm-flow</artifactId>
             <version>${brms.version}</version>

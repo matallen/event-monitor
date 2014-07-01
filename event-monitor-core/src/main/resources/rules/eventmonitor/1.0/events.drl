@@ -1,0 +1,29 @@
+package org.jboss.monitoring.eventmonitor.events;
+
+import org.jboss.eventmonitor.*;
+import org.jboss.eventmonitor.domain.*;
+import org.jboss.eventmonitor.handlers.*;
+import org.apache.camel.CamelContext;
+
+#rule "alert routes"
+#when
+#    $c:CamelContext()
+#then
+#    $c.addRoutes(new RouteBuilder() {@Override public void configure() throws Exception {
+#      from("direct:alert1")
+#      .process(new Processor() {
+#        @Override public void process(Exchange exchange) throws Exception {
+#          System.out.println("ALERT TRIGGERED VIA CAMEL!");
+#      }})
+#      .to("log:Alert");
+#    }});
+#end
+
+rule "max performance threshold of all routes"
+when
+#    $duration:Long() from (3000)
+    $p:EventProcess(duration>3000, $component:component)
+then
+#    System.out.println("EVENT ALERT: service/route ["+$component+"] exceeded threshold of 3s. took "+($p.getDuration())+"ms");
+    CamelHelper.send("direct:alert", "ALERT: Service '"+$component+"' exceeded threshold of "+3000+"ms");
+end
